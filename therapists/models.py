@@ -20,15 +20,21 @@ class TherapistProfile(models.Model):
         related_name='therapist_profile'
     )
     specialization = models.CharField(
+        _('specialization'),
         max_length=20,
         choices=Specialization.choices,
         default=Specialization.CLINICAL
     )
-    license_number = models.CharField(max_length=50, unique=True)
-    years_of_experience = models.PositiveIntegerField(default=0)
-    bio = models.TextField(blank=True)
-    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
-    is_available = models.BooleanField(default=True)
+    license_number = models.CharField(_('license number'), max_length=50, unique=True)
+    years_of_experience = models.PositiveIntegerField(_('years of experience'), default=0)
+    bio = models.TextField(_('bio'), blank=True)
+    hourly_rate = models.DecimalField(
+        _('hourly rate'),
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+    is_available = models.BooleanField(_('is available'), default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
