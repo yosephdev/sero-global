@@ -1,0 +1,68 @@
+# Set default behavior to automatically normalize line endings
+* text=auto eol=lf
+
+# Explicitly declare text files that should use LF line endings
+*.py text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+
+# Binary files should not be modified
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.svg binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.otf binary
+
+# Windows-specific files that should retain CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.psm1 text eol=crlf
+*.psd1 text eol=crlf
+
+# Python files should use LF
+*.py text diff=python
+
+# Django templates
+*.html text diff=html
+*.htm text diff=html
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Git merge strategy for specific files
+*.css merge=union
+*.html merge=union
+*.js merge=union
+*.json merge=union
+*.md merge=union
+*.py merge=union
+*.rst merge=union
+*.txt merge=union
+*.xml merge=union
+*.yaml merge=union
+*.yml merge=union
+
+# Exclude files that should not be versioned
+.gitattributes export-ignore
+.gitignore export-ignore
+*.swp -text
+*.swo -text
+*~ -text
+.DS_Store -text
+Thumbs.db -text
