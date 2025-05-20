@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'channels',
     # Local apps
     'core.apps.CoreConfig',
+    'clients.apps.ClientsConfig',
+    'therapists.apps.TherapistsConfig',
 ]
 
 MIDDLEWARE = [
