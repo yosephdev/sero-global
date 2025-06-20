@@ -14,9 +14,10 @@ class User(AbstractUser):
         ADMIN = 'ADMIN', _('Admin')
 
     role = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=Role.choices,
-        default=Role.CLIENT
+        default=Role.CLIENT,
+        verbose_name=_('role')
     )
     email = models.EmailField(_('email address'), unique=True)
     phone_number = models.CharField(_('phone number'), max_length=20, blank=True)
@@ -51,8 +52,12 @@ class User(AbstractUser):
         return self.role == self.Role.THERAPIST
 
     @property
-    def is_admin(self):
-        return self.role == self.Role.ADMIN
+    def is_admin_user(self):
+        return self.role == self.Role.ADMIN or self.is_superuser
+    
+    @property
+    def __str__(self):
+        return f"{self.username} ({self.get_role_display()})"
 
     class Meta:
         ordering = ['-date_joined']
