@@ -16,10 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/auth/', include('authentication.urls')),
-    path('api/clients/', include('clients.urls')),
-    path('api/therapists/', include('therapists.urls')),
+    
+    # Frontend URLs
+    path('', include('core.urls')),
+    path('auth/', include('django.contrib.auth.urls')),  # Built-in auth URLs
+    path('therapists/', include('therapists.urls')),
+    path('clients/', include('clients.urls')),
+    
+    # API URLs
+    path('api/auth/', include('core.api_urls')),  # Assuming auth API is in core
+    path('api/clients/', include('clients.api_urls')),
+    path('api/therapists/', include('therapists.api_urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
