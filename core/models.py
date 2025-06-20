@@ -8,22 +8,18 @@ class User(AbstractUser):
     """
     Custom user model for Sero Global.
     """
-    class Role(models.TextChoices):
-        CLIENT = 'CLIENT', _('Client')
-        THERAPIST = 'THERAPIST', _('Therapist')
-        ADMIN = 'ADMIN', _('Admin')
-
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.CLIENT,
-        verbose_name=_('role')
-    )
+    ROLE_CHOICES = [
+        ('client', 'Client'),
+        ('therapist', 'Therapist'),
+        ('admin', 'Admin'),
+    ]
+    
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='client')
     email = models.EmailField(_('email address'), unique=True)
-    phone_number = models.CharField(_('phone number'), max_length=20, blank=True)
+    phone_number = models.CharField(_('phone number'), max_length=15, blank=True, null=True)
     is_therapist = models.BooleanField(_('is therapist'), default=False)
     is_client = models.BooleanField(_('is client'), default=False)
-    date_of_birth = models.DateField(_('date of birth'), null=True, blank=True)
+    date_of_birth = models.DateField(_('date of birth'), blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     bio = models.TextField(_('bio'), blank=True)
     is_verified = models.BooleanField(default=False)
@@ -45,15 +41,15 @@ class User(AbstractUser):
 
     @property
     def is_client(self):
-        return self.role == self.Role.CLIENT
+        return self.role == 'client'
 
     @property
     def is_therapist(self):
-        return self.role == self.Role.THERAPIST
+        return self.role == 'therapist'
 
     @property
     def is_admin_user(self):
-        return self.role == self.Role.ADMIN or self.is_superuser
+        return self.role == 'admin' or self.is_superuser
     
     @property
     def __str__(self):

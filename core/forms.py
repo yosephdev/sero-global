@@ -29,7 +29,7 @@ class CustomUserCreationForm(UserCreationForm):
         })
     )
     role = forms.ChoiceField(
-        choices=User.Role.choices,
+        choices=User.ROLE_CHOICES,
         required=True,
         widget=forms.Select(attrs={
             'class': 'form-select'
