@@ -70,7 +70,6 @@ WSGI_APPLICATION = 'sero_global.wsgi.application'
 
 # Database
 if config('DATABASE_URL', default=None):
-    # Production database (Heroku)
     import dj_database_url
     DATABASES = {
         'default': dj_database_url.config(
@@ -80,7 +79,6 @@ if config('DATABASE_URL', default=None):
         )
     }
 else:
-    # Development database
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -114,14 +112,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
@@ -142,12 +139,6 @@ LOGOUT_REDIRECT_URL = 'core:home'
 
 # Email configuration
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
-EMAIL_HOST = config('EMAIL_HOST', default='')
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@seroglobal.com')
 
 # Security settings for production
 if not DEBUG:
@@ -155,37 +146,9 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_SECONDS = 31536000
-    SECURE_REDIRECT_EXEMPT = []
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
 
-# Logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': config('DJANGO_LOG_LEVEL', default='INFO'),
-            'propagate': False,
-        },
-    },
-}
+AUTH_USER_MODEL = 'core.User'
