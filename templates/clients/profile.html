@@ -1,0 +1,464 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}My Profile - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: conic-gradient(#4facfe 0deg, #4facfe 180deg, #e9ecef 180deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .progress-ring::before {
+        content: '';
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: white;
+        position: absolute;
+    }
+
+    .progress-text {
+        position: relative;
+        z-index: 1;
+        font-weight: bold;
+        color: #4facfe;
+    }
+
+    .goal-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #4facfe;
+        transition: transform 0.2s ease;
+    }
+
+    .goal-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .goal-progress {
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .goal-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #4facfe;
+    }
+
+    .mood-tracker {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .mood-emoji {
+        font-size: 2rem;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .mood-emoji:hover {
+        transform: scale(1.2);
+    }
+
+    .mood-emoji.selected {
+        transform: scale(1.3);
+        filter: drop-shadow(0 0 10px rgba(79, 172, 254, 0.5));
+    }
+
+    .session-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e9ecef;
+    }
+
+    .therapist-mini {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        text-decoration: none;
+        color: inherit;
+        transition: background 0.2s ease;
+    }
+
+    .therapist-mini:hover {
+        background: #e9ecef;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .therapist-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 1rem;
+    }
+
+    .badge-custom {
+        background: rgba(79, 172, 254, 0.1);
+        color: #4facfe;
+        border: 1px solid rgba(79, 172, 254, 0.3);
+        border-radius: 20px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Profile Header -->
+    <div class="profile-header p-4">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                {% if client.profile_picture %}
+                <img src="{{ client.profile_picture.url }}" alt="{{ user.get_full_name }}" class="profile-avatar">
+                {% else %}
+                <div class="profile-avatar bg-white d-flex align-items-center justify-content-center mx-auto">
+                    <i class="fas fa-user text-primary" style="font-size: 2.5rem;"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-7">
+                <h1 class="h2 mb-2">{{ user.get_full_name|default:user.username }}</h1>
+                <p class="h6 mb-3 opacity-90">
+                    Member since {{ user.date_joined|date:"F Y" }}
+                </p>
+
+                <div class="d-flex flex-wrap">
+                    <span class="badge bg-light text-dark me-2 mb-2">
+                        <i class="fas fa-calendar me-1"></i>
+                        {{ total_sessions|default:0 }} sessions completed
+                    </span>
+                    <span class="badge bg-light text-dark me-2 mb-2">
+                        <i class="fas fa-target me-1"></i>
+                        {{ active_goals|default:0 }} active goals
+                    </span>
+                    {% if client.preferred_language %}
+                    <span class="badge bg-light text-dark me-2 mb-2">
+                        <i class="fas fa-language me-1"></i>
+                        {{ client.preferred_language }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-3 text-end">
+                <a href="{% url 'clients:profile_edit' %}" class="btn btn-light btn-lg mb-2">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
+                <div class="mt-2">
+                    <small class="opacity-75">Last active: {{ user.last_login|timesince }} ago</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Quick Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ total_sessions|default:0 }}</div>
+                        <div class="text-muted small">Sessions</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ active_goals|default:0 }}</div>
+                        <div class="text-muted small">Active Goals</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ streak_days|default:0 }}</div>
+                        <div class="text-muted small">Day Streak</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ wellness_score|default:0 }}%</div>
+                        <div class="text-muted small">Wellness</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Mood Tracker -->
+            <div class="card mb-4">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-smile text-warning me-2"></i>How are you feeling today?
+                    </h5>
+                    <small class="text-muted">{{ "now"|date:"M d, Y" }}</small>
+                </div>
+                <div class="card-body">
+                    <div class="mood-tracker">
+                        <div class="text-center">
+                            <div class="mood-emoji" data-mood="1">😢</div>
+                            <small class="d-block text-muted">Very Bad</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="mood-emoji" data-mood="2">😟</div>
+                            <small class="d-block text-muted">Bad</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="mood-emoji" data-mood="3">😐</div>
+                            <small class="d-block text-muted">Okay</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="mood-emoji" data-mood="4">😊</div>
+                            <small class="d-block text-muted">Good</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="mood-emoji" data-mood="5">😄</div>
+                            <small class="d-block text-muted">Great</small>
+                        </div>
+                    </div>
+                    {% if today_mood %}
+                    <div class="alert alert-info py-2 mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>You logged your mood as {{ today_mood.get_mood_display }} today</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Current Goals -->
+            <div class="card mb-4">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bullseye text-success me-2"></i>My Goals
+                    </h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-plus me-1"></i>Add Goal
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if goals %}
+                    {% for goal in goals %}
+                    <div class="goal-card">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="mb-1">{{ goal.title }}</h6>
+                                <p class="text-muted small mb-0">{{ goal.description|truncatewords:15 }}</p>
+                            </div>
+                            <span class="badge-custom">{{ goal.category|default:"Personal" }}</span>
+                        </div>
+
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="text-muted">Progress</small>
+                                <small class="fw-medium">{{ goal.progress|default:0 }}%</small>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="goal-progress-bar" style="width: {{ goal.progress|default:0 }}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                Due: {{ goal.target_date|date:"M d, Y"|default:"No deadline" }}
+                            </small>
+                            <div>
+                                <a href="#" class="btn btn-sm btn-outline-primary me-1">Update</a>
+                                <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-bullseye text-muted mb-3" style="font-size: 3rem;"></i>
+                        <h6 class="text-muted">No goals set yet</h6>
+                        <p class="text-muted small mb-3">Setting goals helps track your mental health journey.</p>
+                        <a href="#" class="btn btn-primary">Set Your First Goal</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Sessions -->
+            <div class="card">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history text-info me-2"></i>Recent Sessions
+                    </h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_sessions %}
+                    {% for session in recent_sessions %}
+                    <div class="session-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">Session with {{ session.therapist.name }}</h6>
+                                <p class="text-muted small mb-0">{{ session.date|date:"M d, Y" }} at {{
+                                    session.time|time:"g:i A" }}</p>
+                            </div>
+                            <span class="badge bg-success">Completed</span>
+                        </div>
+
+                        {% if session.notes %}
+                        <p class="text-muted small mb-2">{{ session.notes|truncatewords:20 }}</p>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                {{ session.duration|default:"30 minutes" }}
+                            </small>
+                            <a href="{% url 'clients:session_detail' session.id %}"
+                                class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-check text-muted mb-3" style="font-size: 3rem;"></i>
+                        <h6 class="text-muted">No recent sessions</h6>
+                        <p class="text-muted small mb-3">Your session history will appear here once you start attending
+                            sessions.</p>
+                        <a href="{% url 'clients:book_session' %}" class="btn btn-primary">Book a Session</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Progress Ring -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <div class="progress-ring mb-3">
+                        <span class="progress-text">{{ wellness_score|default:0 }}%</span>
+                    </div>
+                    <h5 class="mb-0">Wellness Score</h5>
+                    <p class="text-muted small">Your overall wellness score based on recent activities and mood.</p>
+                </div>
+            </div>
+            <!-- Therapist Mini Profile -->
+            <div class="card mb-4">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-md text-primary me-2"></i>My Therapist
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if therapist %}
+                    <a href="{% url 'therapists:profile' therapist.id %}" class="therapist-mini">
+                        <img src="{{ therapist.profile_picture.url }}" alt="{{ therapist.name }}"
+                            class="therapist-avatar">
+                        <div>
+                            <h6 class="mb-0">{{ therapist.name }}</h6>
+                            <small class="text-muted">{{ therapist.specialization }}</small>
+                        </div>
+                    </a>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-user-slash text-muted mb-3" style="font-size: 3rem;"></i>
+                        <h6 class="text-muted">No therapist assigned</h6>
+                        <p class="text-muted small mb-3">You can request a therapist through the support section.</p>
+                        <a href="#" class="btn btn-primary">Request a Therapist</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Support Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-life-ring text-danger me-2"></i>Support
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">If you need assistance, please reach out to our support team.</p>
+                    <a href="#" class="btn btn-primary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Mood tracker emoji click handler
+        const moodEmojis = document.querySelectorAll('.mood-emoji');
+        moodEmojis.forEach(emoji => {
+            emoji.addEventListener('click', function () {
+                // Update the mood tracker emoji
+                this.classList.toggle('selected');
+            });
+        });
+    });
+</script>
+{% endblock %}

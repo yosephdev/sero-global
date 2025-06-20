@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Our Services</h1>
+        <p class="lead">Comprehensive mental health support tailored to your needs</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-comments fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="card-title text-center">Individual Therapy</h4>
+                    <p class="card-text">One-on-one sessions with licensed therapists specializing in various areas of
+                        mental health.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Anxiety & Depression</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Trauma & PTSD</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Relationship Issues</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Life Transitions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-users fa-3x text-success"></i>
+                    </div>
+                    <h4 class="card-title text-center">Group Therapy</h4>
+                    <p class="card-text">Connect with others facing similar challenges in a supportive group
+                        environment.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Support Groups</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Skills Training</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Peer Support</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Specialized Programs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-brain fa-3x text-info"></i>
+                    </div>
+                    <h4 class="card-title text-center">Specialized Care</h4>
+                    <p class="card-text">Expert care for specific mental health conditions and specialized populations.
+                    </p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Addiction Recovery</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Eating Disorders</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Chronic Illness</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Elderly Care</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Children & Adolescents</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/services.js' %}"></script>
+{% endblock %}

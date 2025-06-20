@@ -1,0 +1,156 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center hero-content">
+            <div class="col-lg-6 fade-in-up">
+                <h1 class="display-4 fw-bold text-white mb-4">Your Mental Health Journey Starts Here</h1>
+                <p class="lead text-white mb-4 opacity-90">Connect with licensed therapists and access quality mental health services from the comfort of your home. Take the first step towards a healthier, happier you.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'core:register' %}" class="btn btn-light btn-lg">Get Started Today</a>
+                        <a href="{% url 'core:about' %}" class="btn btn-outline-light btn-lg">Learn More</a>
+                    {% else %}
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-light btn-lg">Go to Dashboard</a>
+                        <a href="{% url 'therapists:list' %}" class="btn btn-outline-light btn-lg">Find Therapists</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center mt-5 mt-lg-0">
+                <div class="position-relative">
+                    <img src="{% static 'images/mental-health-hero.jpg' %}" alt="Mental Health Support" class="img-fluid rounded-custom shadow-custom" style="max-width: 90%;">
+                    <!-- <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary-custom opacity-10 rounded-custom">
+                        <h4 class="text-white position-relative" style="top: 50%; transform: translateY(-50%);">Mental Health Support</h4>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+  
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold">Why Choose Sero Global?</h2>
+                <p class="lead">We provide comprehensive mental health services with a focus on accessibility and quality care.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="fas fa-video fa-lg"></i>
+                        </div>
+                        <h4>Secure Video Sessions</h4>
+                        <p class="text-muted">Connect with therapists through our secure, HIPAA-compliant video platform.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="fas fa-user-md fa-lg"></i>
+                        </div>
+                        <h4>Licensed Therapists</h4>
+                        <p class="text-muted">All our therapists are licensed professionals with years of experience.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="fas fa-chart-line fa-lg"></i>
+                        </div>
+                        <h4>Progress Tracking</h4>
+                        <p class="text-muted">Track your mental health journey with our comprehensive progress tools.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-4">Ready to Start Your Journey?</h2>
+                <p class="lead mb-4">Take the first step towards better mental health today.</p>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'core:register' %}" class="btn btn-primary btn-lg me-3">Sign Up Now</a>
+                    <a href="{% url 'core:contact' %}" class="btn btn-outline-primary btn-lg">Contact Us</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold">What Our Clients Say</h2>
+                <p class="lead">Hear from people who have benefited from our services.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body p-4">
+                        <p class="mb-3">"Sero Global made it easy for me to find the right therapist. The video sessions are convenient and secure."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'images/nobody.jpg' %}" alt="Client 1" class="rounded-circle me-3" width="48" height="48">
+                            <div>
+                                <strong>Jane D.</strong><br>
+                                <span class="text-muted small">Client</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body p-4">
+                        <p class="mb-3">"The licensed therapists are professional and caring. I feel supported every step of the way."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'images/nobody.jpg' %}" alt="Client 2" class="rounded-circle me-3" width="48" height="48">
+                            <div>
+                                <strong>Michael S.</strong><br>
+                                <span class="text-muted small">Client</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body p-4">
+                        <p class="mb-3">"I love the progress tracking tools. They help me stay motivated and see how far I've come."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'images/nobody.jpg' %}" alt="Client 3" class="rounded-circle me-3" width="48" height="48">
+                            <div>
+                                <strong>Sarah K.</strong><br>
+                                <span class="text-muted small">Client</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

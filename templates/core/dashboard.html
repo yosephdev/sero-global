@@ -1,0 +1,456 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Welcome Section -->
+        <div class="col-12 mb-4">
+            <div class="card bg-primary-custom text-white">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="h3 mb-2">Welcome back, {{ user.first_name|default:user.username }}!</h1>
+                            <p class="mb-0 opacity-90">
+                                {% if user_role == 'client' %}
+                                Ready to continue your mental health journey? Check your upcoming appointments or find a
+                                new therapist.
+                                {% elif user_role == 'therapist' %}
+                                Here's your overview for today. You have {{ today_appointments|length }} appointment{{
+                                today_appointments|length|pluralize }} scheduled.
+                                {% else %}
+                                Welcome to your Sero Global dashboard.
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex justify-content-end align-items-center">
+                                <div class="me-3">
+                                    <small class="opacity-75">Today</small>
+                                    <div class="h5 mb-0">{{ "now"|date:"M d, Y" }}</div>
+                                </div>
+                                <div class="feature-icon bg-white text-primary" style="width: 60px; height: 60px;">
+                                    {% if user_role == 'client' %}
+                                    <i class="fas fa-user"></i>
+                                    {% elif user_role == 'therapist' %}
+                                    <i class="fas fa-user-md"></i>
+                                    {% else %}
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if user_role == 'client' %}
+    <!-- Client Dashboard -->
+    <div class="row g-4">
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt text-primary-custom me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'therapists:list' %}" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Find a Therapist
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+                        </a>
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="fas fa-video me-2"></i>Join Session
+                        </a>
+                        <a href="{% url 'core:profile' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-user-edit me-2"></i>Update Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Appointments -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar text-primary-custom me-2"></i>
+                        Upcoming Appointments
+                    </h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_appointments %}
+                    {% for appointment in upcoming_appointments %}
+                    <div class="d-flex align-items-center p-3 border rounded mb-3">
+                        <div class="feature-icon me-3 bg-success" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ appointment.therapist.name }}</h6>
+                            <p class="text-muted small mb-0">
+                                {{ appointment.date|date:"M d, Y" }} at {{ appointment.time|time:"g:i A" }}
+                            </p>
+                        </div>
+                        <div>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Join</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="feature-icon mx-auto mb-3 bg-light text-muted" style="width: 80px; height: 80px;">
+                            <i class="fas fa-calendar-times"></i>
+                        </div>
+                        <h6 class="text-muted">No upcoming appointments</h6>
+                        <p class="text-muted small mb-3">Ready to schedule your first session?</p>
+                        <a href="{% url 'therapists:list' %}" class="btn btn-primary">Find a Therapist</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Your Progress
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-primary-custom mb-1">{{ total_sessions|default:0 }}</div>
+                                <small class="text-muted">Sessions</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-success mb-1">{{ total_goals|default:0 }}</div>
+                                <small class="text-muted">Goals</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="h4 text-info mb-1">{{ days_active|default:0 }}</div>
+                            <small class="text-muted">Days</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <p class="text-muted small mb-2">Start tracking your mental health journey</p>
+                        <a href="#" class="btn btn-sm btn-outline-success">Set Goals</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-book text-info me-2"></i>
+                        Helpful Resources
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3 bg-light text-primary" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Understanding Mental Health</h6>
+                                    <p class="text-muted small mb-0">Learn about the basics of mental health.</p>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3 bg-light text-primary" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Coping Strategies</h6>
+                                    <p class="text-muted small mb-0">Explore techniques to manage stress and anxiety.</p>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3 bg-light text-primary" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Community Support</h6>
+                                    <p class="text-muted small mb-0">Connect with others in the mental health community.</p>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3 bg-light text-primary" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Self-Care Tips</h6>
+                                    <p class="text-muted small mb-0">Simple ways to take care of your mental health daily.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% elif user_role == 'therapist' %}
+    <!-- Therapist Dashboard -->
+    <div class="row g-4">
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt text-primary-custom me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Create New Session
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-chart-line me-2"></i>View Client Progress
+                        </a>
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="fas fa-book me-2"></i>Manage Resources
+                        </a>
+                        <a href="{% url 'therapists:profile' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-user-edit me-2"></i>Update Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Appointments -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar text-primary-custom me-2"></i>
+                        Today's Appointments
+                    </h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if today_appointments %}
+                    {% for appointment in today_appointments %}
+                    <div class="d-flex align-items-center p-3 border rounded mb-3">
+                        <div class="feature-icon me-3 bg-success" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ appointment.client.name }}</h6>
+                            <p class="text-muted small mb-0">
+                                {{ appointment.date|date:"M d, Y" }} at {{ appointment.time|time:"g:i A" }}
+                            </p>
+                        </div>
+                        <div>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Join</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="feature-icon mx-auto mb-3 bg-light text-muted" style="width: 80px; height: 80px;">
+                            <i class="fas fa-calendar-times"></i>
+                        </div>
+                        <h6 class="text-muted">No appointments for today</h6>
+                        <p class="text-muted small mb-3">You can manage your schedule or add new clients.</p>
+                        <a href="#" class="btn btn-primary">Manage Schedule</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Progress -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Client Progress Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-primary-custom mb-1">0</div>
+                                <small class="text-muted">Clients</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-success mb-1">0</div>
+                                <small class="text-muted">Sessions</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="h4 text-info mb-1">0</div>
+                            <small class="text-muted">Goals</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            Track your clients' progress and set new goals.
+                        </p>
+                        <a href="#" class="btn btn-sm btn-outline-success">View Clients</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-transparent">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bell text-warning me-2"></i>
+                    Notifications
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <p class="text-muted mb-0">
+                        You have no new notifications.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- Admin Dashboard -->
+<div class="row g-4">
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-transparent">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt text-primary-custom me-2"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="" class="btn btn-outline-primary">Manage Therapists</a>
+                    <a href="" class="btn btn-outline-primary">Manage Clients</a>
+                    <a href="" class="btn btn-outline-primary">View Appointments</a>
+                    <a href="" class="btn btn-outline-primary">Manage Resources</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Client Progress -->
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header bg-transparent">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line text-success me-2"></i>
+                    Client Progress Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="border-end">
+                            <div class="h4 text-primary-custom mb-1">{{ total_clients }}</div>
+                            <small class="text-muted">Clients</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border-end">
+                            <div class="h4 text-success mb-1">{{ total_sessions }}</div>
+                            <small class="text-muted">Sessions</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="h4 text-info mb-1">{{ total_goals }}</div>
+                        <small class="text-muted">Goals</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <p class="text-muted mb-0">
+                        Monitor overall progress and set new initiatives.
+                    </p>
+                    <a href="" class="btn btn-sm btn-outline-success">View Clients</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Notifications -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-transparent">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bell text-warning me-2"></i>
+                    Notifications
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <p class="text-muted mb-0">
+                        You have no new notifications.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Dashboard loaded');
+    });
+</script>
+{% if not user.is_superuser %}
+<script>
+    // Custom scripts for non-superuser dashboard can be added here
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Non-superuser dashboard loaded');
+    });
+</script>
+{% endif %}
+{% if user.is_superuser %}
+<script>
+    // Custom scripts for superuser dashboard can be added here
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Superuser dashboard loaded');
+    });
+</script>
+{% endif %}
+{% endblock %}

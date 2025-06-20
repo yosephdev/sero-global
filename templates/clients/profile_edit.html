@@ -1,0 +1,403 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block title %}Edit Profile - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-edit-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e9ecef;
+    }
+
+    .form-section h5 {
+
+        color: #4facfe;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(103, 126, 234, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(103, 126, 234, 0.3);
+    }
+
+    .profile-picture-upload {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-picture-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid #667eea;
+        object-fit: cover;
+        margin-bottom: 1rem;
+    }
+
+    .profile-picture-placeholder {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px dashed #667eea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        margin-bottom: 1rem;
+    }
+
+    .upload-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(103, 126, 234, 0.8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+        margin-bottom: 1rem;
+    }
+
+    .profile-picture-upload:hover .upload-overlay {
+        opacity: 1;
+    }
+
+    .form-floating>label {
+        color: #6c757d;
+    }
+
+    .form-floating>.form-control:focus~label,
+    .form-floating>.form-control:not(:placeholder-shown)~label {
+        color: #4facfe;
+    }
+
+    .invalid-feedback {
+        display: block;
+    }
+
+    .alert-info {
+        background: rgba(79, 172, 254, 0.1);
+        border: 1px solid rgba(79, 172, 254, 0.3);
+        color: #667eea;
+    }
+
+    .emergency-contact-section {
+        background: rgba(220, 53, 69, 0.05);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        border-radius: 10px;
+        padding: 1.5rem;
+    }
+
+    .emergency-contact-section h6 {
+        color: #dc3545;
+    }
+
+    .preferences-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .preference-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+
+    .form-check-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(103, 126, 234, 0.25);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="profile-edit-header p-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="h2 mb-2">Edit Your Profile</h1>
+                <p class="mb-0 opacity-90">
+
+                    Update your personal information and preferences.
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{% url 'clients:profile' %}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    <h5><i class="fas fa-user me-2"></i>Personal Information</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="id_first_name" name="first_name" 
+                                   value="{{ user.first_name }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="id_last_name" name="last_name" 
+                                   value="{{ user.last_name }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                
+                                <label for="{{ form.user.email.id_for_label }}">Email Address</label>
+                                {% if form.user.email.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.user.email.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                
+                                <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                                {% if form.phone_number.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.phone_number.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                               
+                                <label for="{{ form.date_of_birth.id_for_label }}">Date of Birth</label>
+                                {% if form.date_of_birth.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.date_of_birth.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                
+                                <label for="{{ form.gender.id_for_label }}">Gender</label>
+                                {% if form.gender.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.gender.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            
+                            <label for="{{ form.address.id_for_label }}">Address</label>
+                            {% if form.address.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.address.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Information -->
+                <div class="form-section">
+                    <h5><i class="fas fa-heartbeat me-2"></i>Medical Information</h5>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        This information helps your therapist provide better care. All medical information is kept
+                        strictly confidential.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.medical_history.id_for_label }}" class="form-label">Medical History</label>
+                       
+                        <div class="form-text">Include any relevant medical conditions, medications, or treatments.
+                        </div>
+                        {% if form.medical_history.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.medical_history.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.current_medications.id_for_label }}" class="form-label">Current
+                            Medications</label>
+                        
+                        <div class="form-text">List all medications you are currently taking.</div>
+                        {% if form.current_medications.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.current_medications.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.allergies.id_for_label }}" class="form-label">Allergies</label>
+                      
+                        <div class="form-text">List any known allergies or adverse reactions.</div>
+                        {% if form.allergies.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.allergies.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Preferences -->
+                <div class="form-section">
+                    <h5><i class="fas fa-cog me-2"></i>Preferences</h5>
+
+                    <div class="preferences-grid">
+                        <div class="preference-card">
+                            <h6 class="mb-3">Communication</h6>
+                            <div class="form-floating mb-3">
+                                
+                                <label for="{{ form.preferred_language.id_for_label }}">Preferred Language</label>
+                            </div>
+                            <div class="form-floating">
+                                
+                                <label for="{{ form.preferred_contact_method.id_for_label }}">Contact Method</label>
+                            </div>
+                        </div>
+
+                        <div class="preference-card">
+                            <h6 class="mb-3">Session Preferences</h6>
+                            <div class="form-floating mb-3">
+                               
+                                <label for="{{ form.preferred_session_time.id_for_label }}">Preferred Time</label>
+                            </div>
+                            <div class="form-floating">
+                                
+                                <label for="{{ form.session_frequency.id_for_label }}">Session Frequency</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6 class="mb-3">Notification Preferences</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    
+                                    <label class="form-check-label" for="{{ form.email_notifications.id_for_label }}">
+                                        Email Notifications
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    
+                                    <label class="form-check-label" for="{{ form.sms_notifications.id_for_label }}">
+                                        SMS Notifications
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    
+                                    <label class="form-check-label" for="{{ form.appointment_reminders.id_for_label }}">
+                                        Appointment Reminders
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                   
+                                    <label class="form-check-label" for="{{ form.progress_updates.id_for_label }}">
+                                        Progress Updates
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Profile Picture -->
+                <div class="form-section">
+                    <h5><i class="fas fa-camera me-2"></i>Profile Picture</h5>
+                    <div class="form-floating mb-3">
+                        
+                        <label for="{{ form.profile_picture.id_for_label }}">Upload a new picture</label>
+                    </div>
+                </div>
+                <!-- Emergency Contact -->
+                <div class="form-section">
+                    <h5><i class="fas fa-exclamation-circle me-2"></i>Emergency Contact</h5>
+                    <div class="form-floating mb-3">
+                        
+                        <label for="{{ form.emergency_contact_name.id_for_label }}">Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        
+                        <label for="{{ form.emergency_contact_phone.id_for_label }}">Phone</label>
+                    </div>
+                </div>
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
