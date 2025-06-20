@@ -1,0 +1,35 @@
+{
+  "name": "Sero Global",
+  "description": "A mental health platform built with Django for better access to mental health services",
+  "repository": "https://github.com/yosephdev/sero-global",
+  "keywords": ["django", "mental-health", "therapy", "healthcare"],
+  "addons": [
+    "heroku-postgresql:mini",
+    "heroku-redis:mini"
+  ],
+  "env": {
+    "SECRET_KEY": {
+      "description": "Django secret key",
+      "generator": "secret"
+    },
+    "DEBUG": {
+      "description": "Debug mode",
+      "value": "False"
+    },
+    "ALLOWED_HOSTS": {
+      "description": "Allowed hosts",
+      "value": ".herokuapp.com"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
