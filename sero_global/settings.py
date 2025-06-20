@@ -68,27 +68,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sero_global.wsgi.application'
 
-# Database
-if config('DATABASE_URL', default=None):
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=config('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME', default='sero_global'),
-            'USER': config('DB_USER', default='postgres'),
-            'PASSWORD': config('DB_PASSWORD', default=''),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
-        }
-    }
+# Database Configuration - Fixed for Heroku
+import dj_database_url
+
+# Use DATABASE_URL if available (Heroku), otherwise use local config
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL', default=f"postgresql://{config('DB_USER', default='postgres')}:{config('DB_PASSWORD', default='')}@{config('DB_HOST', default='localhost')}:{config('DB_PORT', default='5432')}/{config('DB_NAME', default='sero_global')}"),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
